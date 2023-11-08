@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import com.example.practica2aplicacionpreguntas.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 @Composable
 fun Juego(){
@@ -56,10 +60,10 @@ fun Juego(){
     var retroalimentacionColor by remember { mutableStateOf(Color.Transparent) }
     var respuestaUsuario by remember { mutableStateOf(false) }
     var indicePregunta by remember { mutableStateOf(0) }
-
+    val funcionDelay = rememberCoroutineScope()
     // Variable para almacenar el índice de la pregunta aleatoria
     var preguntaAleatoria by remember { mutableStateOf(Random.nextInt(5)) }
-    
+
     //Creamos una columna que almacene tod0 lo que necesitamos para que se vea de forma vertical
     //Le añadimos un modificador a la columna para que tenga tod0 el espacio, aparte de que verticalmente tengamos el SpaceBetween
     //para que se tenga el mismo espacio para todos lados, y luego horizontalmente que tod0 lo que este dentro este centrado.
@@ -116,6 +120,11 @@ fun Juego(){
                             retroalimentacionTexto = "Incorrecto"
                             retroalimentacionColor = Color.Red
                         }
+                        funcionDelay.launch(Dispatchers.Main){
+                            delay(2000)
+                            preguntaAleatoria = if (preguntaAleatoria < lista.size - 1) {preguntaAleatoria + 1} else 0
+                            retroalimentacionTexto= ""
+                        }
                     },
                     //ponemos un modificador para que tenga un padding entre botones, para que no esten pegados
                     modifier = Modifier.padding(horizontal = 8.dp)
@@ -131,6 +140,11 @@ fun Juego(){
                         } else {
                             retroalimentacionTexto = "Incorrecto"
                             retroalimentacionColor = Color.Red
+                        }
+                        funcionDelay.launch(Dispatchers.Main){
+                            delay(2000)
+                            preguntaAleatoria = if (preguntaAleatoria < lista.size - 1) {preguntaAleatoria + 1} else 0
+                            retroalimentacionTexto= ""
                         }
                     },
                     modifier = Modifier.padding(horizontal = 8.dp)
@@ -188,6 +202,7 @@ fun Juego(){
                     onClick = {
                         //Indice aleatorio diferente al actual
                         preguntaAleatoria = Random.nextInt(3)
+                        retroalimentacionTexto= ""
                     },
                     modifier = Modifier.padding(horizontal = 10.dp)
                 ) {
